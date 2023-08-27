@@ -8,7 +8,6 @@ name = "fibonacci"
 path = "src/bin/fibonacci.rs"
 
 [dependencies]
-#blst = "0.3.11"
 milagro_bls = { path = '/home/noah/code/milagro_bls' }
 hex = { version = "0.4.0" }
 #{ git = "https://github.com/sigp/milagro_bls", tag = "v1.4.2", optional = true }

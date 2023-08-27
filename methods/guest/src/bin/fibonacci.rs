@@ -78,50 +78,8 @@ fn aggregate_verfication() {
     let pubkeys_as_ref: Vec<&PublicKey> = pubkeys.iter().collect();
     let agg_pub = AggregatePublicKey::aggregate(pubkeys_as_ref.as_slice()).unwrap();
     let verified = agg_sig.fast_aggregate_verify_pre_aggregated(&msg[..], &agg_pub);
-    assert!(verified);
-
-    // for _ in 0..n {
-    //     let keypair = Keypair::random(&mut rand::thread_rng());
-    //     let sig = Signature::new(&msg[..], &keypair.sk);
-    //     agg_sig.add(&sig);
-    //     pubkeys.push(keypair.pk);
-    // }
-
-    //assert_eq!(pubkeys.len(), n);
-
-
-
-    // c.bench(
-    //     "aggregation",
-    //     Benchmark::new("Verifying aggregate of 128 signatures", move |b| {
-    //         b.iter(|| {
-    //             let pubkeys_as_ref: Vec<&PublicKey> = pubkeys.iter().collect();
-    //             let agg_pub = AggregatePublicKey::aggregate(pubkeys_as_ref.as_slice()).unwrap();
-    //             let verified = agg_sig.fast_aggregate_verify_pre_aggregated(&msg[..], &agg_pub);
-    //             assert!(verified);
-    //         })
-    //     })
-    //     .sample_size(100),
-    // );
+    assert!(verified);  
 }
-
-// fn blst_fun() {
-//     let mut rng = rand::thread_rng();
-//     let mut ikm = [0u8; 32];
-//     rng.fill_bytes(&mut ikm);
-
-//     let sk = SecretKey::key_gen(&ikm, &[]).unwrap();
-//     let pk = sk.sk_to_pk();
-
-//     let dst = b"BLS_SIG_BLS12381G2_XMD:SHA-256_SSWU_RO_NUL_";
-//     let msg = b"blst is such a blast";
-//     let sig = sk.sign(msg, dst, &[]);
-
-//     // Verify the signature
-//     let err = sig.verify(false, msg, dst, &[], &pk, true); // Use `false` instead of `true`
-//     assert_eq!(err, blst::BLST_ERROR::BLST_SUCCESS); // Correct the module path separator (::)
-// }
-
 
 fn main() {
     // Read data sent from the application contract.
@@ -135,7 +93,6 @@ fn main() {
     // Run the computation.
     let result = fibonacci(n);
 
-   // blst_fun();
     aggregate_verfication();
 
     // Commit the journal that will be received by the application contract.
