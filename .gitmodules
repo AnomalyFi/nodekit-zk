@@ -14,3 +14,7 @@
 	path = lib/risc0
 	url = https://github.com/risc0/risc0
 	branch = release-0.17
+[submodule "lib/blst"]
+	path = lib/blst
+	url = https://github.com/supranational/blst
+	branch = master
