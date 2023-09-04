@@ -87,6 +87,7 @@ fn main() {
     env::stdin().read_to_end(&mut input_bytes).unwrap();
     // Type array passed to `ethabi::decode_whole` should match the types encoded in
     // the application contract.
+
     let input = ethabi::decode_whole(&[ParamType::Uint(256)], &input_bytes).unwrap();
     let n: U256 = input[0].clone().into_uint().unwrap();
 
