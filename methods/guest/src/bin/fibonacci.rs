@@ -17,13 +17,41 @@
 use std::io::Read;
 
 use ethabi::{ethereum_types::U256, ParamType, Token};
+
 use milagro_bls::*;
 
-//use rand::RngCore;
 use risc0_zkvm::guest::env;
-// use blst::min_pk::{SecretKey, PublicKey}; // Import PublicKey as well
+use alloy_primitives::{Address, U256};
+use alloy_sol_types::{sol, SolCall, SolType, sol_data::*};
+use hex_literal::hex;
 
 risc0_zkvm::guest::entry!(main);
+
+
+
+sol! {
+    struct WarpBlock {
+        uint256 height;
+        uint256 blockRoot;
+        uint256 parentRoot;
+    }
+}
+
+sol! {
+    struct G2Point {
+        bytes data;
+    }
+}
+
+sol! {
+    struct RiscBlock {
+        //TODO 
+        G2Point[] keys;
+        bytes sig;
+        bytes wb;
+    }
+}
+
 
 fn fibonacci(n: U256) -> U256 {
     let (mut prev, mut curr) = (U256::one(), U256::one());
@@ -87,6 +115,16 @@ fn main() {
     env::stdin().read_to_end(&mut input_bytes).unwrap();
     // Type array passed to `ethabi::decode_whole` should match the types encoded in
     // the application contract.
+
+
+    //TODO this first object needs to be able unwrap the data into a bytes[] of keys, 
+
+    let data = hex!(
+        "a9059cbb"
+        "0000000000000000000000008bc47be1e3abbaba182069c89d08a61fa6c2b292"
+        "0000000000000000000000000000000000000000000000000000000253c51700"
+    );
+    let decoded = WarpBlock::decode(&data, true).unwrap();
 
     let input = ethabi::decode_whole(&[ParamType::Uint(256)], &input_bytes).unwrap();
     let n: U256 = input[0].clone().into_uint().unwrap();
