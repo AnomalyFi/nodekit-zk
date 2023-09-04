@@ -32,8 +32,8 @@ risc0_zkvm::guest::entry!(main);
 sol! {
     struct WarpBlock {
         uint256 height;
-        uint256 blockRoot;
-        uint256 parentRoot;
+        uint256 block_root;
+        uint256 parent_root;
     }
 }
 
@@ -106,7 +106,7 @@ fn aggregate_verfication() {
     let pubkeys_as_ref: Vec<&PublicKey> = pubkeys.iter().collect();
     let agg_pub = AggregatePublicKey::aggregate(pubkeys_as_ref.as_slice()).unwrap();
     let verified = agg_sig.fast_aggregate_verify_pre_aggregated(&msg[..], &agg_pub);
-    assert!(verified);  
+    verified
 }
 
 fn main() {
@@ -117,22 +117,23 @@ fn main() {
     // the application contract.
 
 
-    //TODO this first object needs to be able unwrap the data into a bytes[] of keys, 
+    let decoded = RiscBlock::decode_whole(&data, true).unwrap();
 
-    let data = hex!(
-        "a9059cbb"
-        "0000000000000000000000008bc47be1e3abbaba182069c89d08a61fa6c2b292"
-        "0000000000000000000000000000000000000000000000000000000253c51700"
-    );
-    let decoded = WarpBlock::decode(&data, true).unwrap();
+    let keys: G2Point[] = decoded[0].clone().unwrap();
 
-    let input = ethabi::decode_whole(&[ParamType::Uint(256)], &input_bytes).unwrap();
-    let n: U256 = input[0].clone().into_uint().unwrap();
+    let sig: bytes = decoded[1].clone().unwrap();
 
-    // Run the computation.
-    let result = fibonacci(n);
+    let wb: bytes = decoded[2].clone().unwrap();
 
-    aggregate_verfication();
+
+
+    // let input = ethabi::decode_whole(&[ParamType::Uint(256)], &input_bytes).unwrap();
+    // let n: U256 = input[0].clone().into_uint().unwrap();
+
+    // // Run the computation.
+    // let result = fibonacci(n);
+
+    let result = aggregate_verfication();
 
     // Commit the journal that will be received by the application contract.
     // Encoded types should match the args expected by the application callback.
