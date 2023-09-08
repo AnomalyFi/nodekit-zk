@@ -61,7 +61,7 @@ contract Sequencer is BonsaiCallbackReceiver {
         emit NewBlock(firstBlockNumber);
     }
 
-    function newBlock(
+    function addBlock(
         bytes memory message,
         bytes memory sig,
         bool[] memory bitmap,
@@ -105,6 +105,15 @@ contract Sequencer is BonsaiCallbackReceiver {
 
         bonsaiRelay.requestCallback(
             blsImageId, abi.encode(rb), address(this), this.storeResult.selector, 100000
+        );
+    }
+
+
+    function addBlockDemo(
+        RiscBlock calldata risc
+    ) external {
+        bonsaiRelay.requestCallback(
+            blsImageId, abi.encode(risc), address(this), this.storeResult.selector, 10000000
         );
     }
 
