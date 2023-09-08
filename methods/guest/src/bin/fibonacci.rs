@@ -21,7 +21,7 @@ use ethabi::{ethereum_types::U256, ParamType, Token};
 use milagro_bls::*;
 
 use risc0_zkvm::guest::env;
-use alloy_primitives::{Address, U256};
+use alloy_primitives::{Address, U256, Bytes};
 use alloy_sol_types::{sol, SolCall, SolType, sol_data::*};
 use hex_literal::hex;
 
@@ -52,17 +52,7 @@ sol! {
     }
 }
 
-
-fn fibonacci(n: U256) -> U256 {
-    let (mut prev, mut curr) = (U256::one(), U256::one());
-    for _ in 2..=n.as_u32() {
-        (prev, curr) = (curr, prev + curr);
-    }
-    curr
-}
-
-
-fn aggregate_verfication() {
+fn aggregate_verfication_test() {
     //let n = 128;
 
     let mut pubkeys = vec![];
@@ -109,6 +99,26 @@ fn aggregate_verfication() {
     verified
 }
 
+
+
+//TODO check if these arrays are correct
+fn aggregate_verification(keys: &[G2Point], sig: &[bytes], msg: &[bytes]) -> bool {
+    let mut pubkeys = vec![];
+
+    let mut agg_sig = AggregateSignature::from_uncompressed_bytes(&sig).unwrap();
+
+    for i in 0..keys.len() {
+        let pubkey = PublicKey::from_uncompressed_bytes(&keys[i]).unwrap();
+        pubkeys.push(pubkey);
+    }
+
+    let pubkeys_as_ref: Vec<&PublicKey> = pubkeys.iter().collect();
+    let agg_pub = AggregatePublicKey::aggregate(pubkeys_as_ref.as_slice()).unwrap();
+    let verified = agg_sig.fast_aggregate_verify_pre_aggregated(&msg[..], &agg_pub);
+    verified
+}
+
+
 fn main() {
     // Read data sent from the application contract.
     let mut input_bytes = Vec::<u8>::new();
@@ -123,7 +133,7 @@ fn main() {
 
     let sig: bytes = decoded[1].clone().unwrap();
 
-    let wb: bytes = decoded[2].clone().unwrap();
+    let msg: bytes = decoded[2].clone().unwrap();
 
 
 
