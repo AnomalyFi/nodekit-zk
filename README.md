@@ -280,3 +280,15 @@ Build configuration for the methods is included in `methods/build.rs`.
 [risc0/risc0]: https://github.com/risc0/risc0/tree/main/bonsai/ethereum-relay
 [zkVM guest program]: https://www.dev.risczero.com/terminology#guest-program
 [zkVM]: https://www.dev.risczero.com/terminology#zero-knowledge-virtual-machine-zkvm
+
+
+### Prove on Bonsai
+
+By default, the tests above run without producing a zkVM receipt.
+Running `forge test` with the following environment variables will cause the system to prove the vote finalization step using Bonsai.
+The Bonsai proving service will produce a single STARK proof for the full computation, then compress the proof into a SNARK.
+The Bonsai relay service, run locally for the test, uploads this SNARK to authorize the callback to the Governance contract.
+
+export BONSAI_API_KEY="pR4DjMRwaB5nkKJc0tWFE7a2MeoPk5qj3BP6OrR9" 
+export BONSAI_API_URL="https://api.bonsai.xyz/" 
+RISC0_DEV_MODE=false forge test 

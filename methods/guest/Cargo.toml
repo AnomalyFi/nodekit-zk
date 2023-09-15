@@ -6,14 +6,15 @@ edition = "2021"
 #[workspace]
 
 [[bin]]
-name = "fibonacci"
-path = "src/bin/fibonacci.rs"
+name = "bls"
+path = "src/bin/bls.rs"
 
 [dependencies]
 milagro_bls = { path = '/home/noah/code/milagro_bls' }
 hex = { version = "0.4.0" }
 #{ git = "https://github.com/sigp/milagro_bls", tag = "v1.4.2", optional = true }
 ethabi = { version = "18.0", default-features = false }
+alloy-sol-types = "0.3.2"
 # Directly import radium to silence warning about unused patch. See https://github.com/risc0/risc0/issues/549
 radium = "=0.7.1"
 risc0-zkvm = { git = "https://github.com/risc0/risc0", rev = "da5bc39089c6dba8b03510837f1c7363ed3cc8b7", default-features = false, features = ["std"] }

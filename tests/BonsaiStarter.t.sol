@@ -21,7 +21,22 @@ import {IBonsaiRelay} from "bonsai/IBonsaiRelay.sol";
 import {BonsaiStarter} from "contracts/BonsaiStarter.sol";
 
 contract BonsaiStarterTest is BonsaiTest {
-    function setUp() public withRelay {}
+    // bool useZkvmGuest;
+    // bytes32 imageId;
+
+    // function setUp() public withRelay {
+    //     useZkvmGuest = vm.envOr("TEST_USE_ZKVM", true);
+    //     if (useZkvmGuest) {
+    //         imageId = queryImageId("FINALIZE_VOTES");
+    //     }
+
+        
+    //     gov = governor(token);
+    //     scene = scenario(gov, token);
+
+    //     // Enable recording of logs so we can build the ballot list.
+    //     vm.recordLogs();
+    // }
 
     function testMockCall() public {
         // Deploy a new starter instance

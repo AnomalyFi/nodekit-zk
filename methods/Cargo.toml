@@ -9,7 +9,17 @@ methods = ["guest"]
 [build-dependencies]
 risc0-build = { workspace = true, features = ["guest-list"] }
 
+[dev-dependencies]
+hex = { version = "0.4.0" }
+
 [dependencies]
+alloy-primitives = { version = "0.3.3", features = ["serde"] }
 alloy-sol-types = "0.3.2"
 risc0-build = { workspace = true, features = ["guest-list"] }
 risc0-zkvm = { workspace = true }
+
+[features]
+default = []
+metal = ["risc0-zkvm/metal"]
+cuda = ["risc0-zkvm/cuda"]
+
