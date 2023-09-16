@@ -16,6 +16,7 @@ use anyhow::Context;
 use bonsai_ethereum_relay::sdk::client::{CallbackRequest, Client};
 use clap::Parser;
 use ethers::{abi::ethabi, types::Address};
+use alloy_sol_types::SolType;
 use methods::BLS_ID;
 use risc0_zkvm::sha::Digest;
 
@@ -25,11 +26,15 @@ use risc0_zkvm::sha::Digest;
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about)]
 struct Args {
-    /// Adress for the BonsaiStarter application contract.
+    /// Adress for the Sequencer application contract.
     address: Address,
 
-    /// Input N for calculating the Nth Fibonacci number.
-    number: u64,
+    key: Vec<u8>,
+    
+    sig: Vec<u8>,
+    
+    wb: Vec<u8>,
+
 
     /// Bonsai Relay API URL.
     #[arg(long, env, default_value = "http://localhost:8080")]
@@ -52,7 +57,40 @@ async fn main() -> anyhow::Result<()> {
     .context("Failed to initialize the relay client")?;
 
     // Initialize the input for the FIBONACCI guest.
-    let input = ethabi::encode(&[ethers::abi::Token::Uint(args.number.into())]);
+    //let input = ethabi::encode(&[ethers::abi::Token::Uint(args.number.into())]);
+
+    alloy_sol_types::sol! {
+        struct WarpBlock {
+            uint256 height;
+            uint256 block_root;
+            uint256 parent_root;
+        }
+
+        // struct G2Point {
+        //     bytes data;
+        // }
+
+        struct RiscBlock {
+            bytes key;
+            bytes sig;
+            bytes wb;
+        }
+    }
+
+    let risc_block: RiscBlock = RiscBlock {
+        key: args.key.into(),
+        sig: args.sig.into(),
+        wb: args.wb.into()
+    };
+
+    let input: Vec<u8> = RiscBlock::encode(&risc_block);
+
+    let selector: Vec<u8> = hex::decode("32c8da6f").unwrap();
+
+
+    let mut array = [0; 4]; // Initialize a [u8; 4] array with all zeros
+    array.copy_from_slice(&selector[..4]); // Copy the first four bytes from the vector
+    
 
     // Create a CallbackRequest for your contract
     // example: (contracts/BonsaiStarter.sol).
@@ -60,7 +98,7 @@ async fn main() -> anyhow::Result<()> {
         callback_contract: args.address,
         // you can use the command `solc --hashes contracts/BonsaiStarter.sol`
         // to get the value for your actual contract (9f2275c0: storeResult(uint256,uint256))
-        function_selector: [0x9f, 0x22, 0x75, 0xc0],
+        function_selector: array,
         gas_limit: 3000000,
         image_id: Digest::from(BLS_ID).into(),
         input,

@@ -2,8 +2,8 @@
 
 pragma solidity ^0.8.17;
 
-import {IBonsaiRelay} from "bonsai/IBonsaiRelay.sol";
-import {BonsaiCallbackReceiver} from "bonsai/BonsaiCallbackReceiver.sol";
+import {IBonsaiRelay} from "./IBonsaiRelay.sol";
+import {BonsaiCallbackReceiver} from "./BonsaiCallbackReceiver.sol";
 
 contract Sequencer is BonsaiCallbackReceiver {
     event NewStakingKey(G2Point stakingKey, uint256 amount, uint256 index);
@@ -36,9 +36,9 @@ contract Sequencer is BonsaiCallbackReceiver {
         uint256 parent_root;
     }
 
-    // struct G2Point {
-    //     bytes data;
-    // }
+    struct G2Point {
+        bytes data;
+    }
 
     struct RiscBlock {
         bytes key;
