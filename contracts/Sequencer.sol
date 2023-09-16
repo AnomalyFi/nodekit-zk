@@ -32,20 +32,19 @@ contract Sequencer is BonsaiCallbackReceiver {
 
     struct WarpBlock {
         uint256 height;
-        uint256 blockRoot;
-        uint256 parentRoot;
+        uint256 block_root;
+        uint256 parent_root;
     }
 
-    struct G2Point {
-        bytes data;
-    }
+    // struct G2Point {
+    //     bytes data;
+    // }
 
     struct RiscBlock {
-        G2Point[] keys;
+        bytes key;
         bytes sig;
         bytes wb;
     }
-
 
     /// @notice Callback function logic for processing verified journals from Bonsai.
     function storeResult(WarpBlock calldata warp) external onlyBonsaiCallback(blsImageId) {
@@ -54,59 +53,59 @@ contract Sequencer is BonsaiCallbackReceiver {
             revert IncorrectBlockNumber(warp.height, blockHeight);
         }
 
-        commitments[blockHeight] = warp.blockRoot;
+        commitments[blockHeight] = warp.block_root;
         blockHeight += 1;
         
 
         emit NewBlock(firstBlockNumber);
     }
 
-    function addBlock(
-        bytes memory message,
-        bytes memory sig,
-        bool[] memory bitmap,
-        uint256 minStakeThreshold
-    ) external {
-        require(bitmap.length <= _stakingKeys.length, "bitmap is too long");
+    // function addBlock(
+    //     bytes memory message,
+    //     bytes memory sig,
+    //     bool[] memory bitmap,
+    //     uint256 minStakeThreshold
+    // ) external {
+    //     require(bitmap.length <= _stakingKeys.length, "bitmap is too long");
 
-        // Build aggregated public key
-        uint256 index = 0;
-        while (!bitmap[index] && index < bitmap.length) {
-            index++;
-        }
+    //     // Build aggregated public key
+    //     uint256 index = 0;
+    //     while (!bitmap[index] && index < bitmap.length) {
+    //         index++;
+    //     }
 
-        if (index >= bitmap.length) {
-            revert NoKeySelected();
-        }
+    //     if (index >= bitmap.length) {
+    //         revert NoKeySelected();
+    //     }
 
-        // Compute the stake corresponding to the signers and check if it is enough
-        uint256 stake = 0;
-        for (uint256 i = index; i < bitmap.length; i++) {
-            if (bitmap[i]) {
-                stake += _stakeAmounts[i]; 
-            }
-        }
+    //     // Compute the stake corresponding to the signers and check if it is enough
+    //     uint256 stake = 0;
+    //     for (uint256 i = index; i < bitmap.length; i++) {
+    //         if (bitmap[i]) {
+    //             stake += _stakeAmounts[i]; 
+    //         }
+    //     }
 
-        if (stake < minStakeThreshold) {
-            revert NotEnoughStake();
-        }
+    //     if (stake < minStakeThreshold) {
+    //         revert NotEnoughStake();
+    //     }
 
-        //TODO fix the keys because bytes[] is bytes
-        G2Point[] memory keys = new G2Point[](bitmap.length);
+    //     //TODO fix the keys because bytes[] is bytes
+    //     G2Point[] memory keys = new G2Point[](bitmap.length);
 
 
-        for (uint256 i = index + 1; i < bitmap.length; i++) {
-            if (bitmap[i]) {
-                keys[i] = _stakingKeys[i];
-            }
-        }
+    //     for (uint256 i = index + 1; i < bitmap.length; i++) {
+    //         if (bitmap[i]) {
+    //             keys[i] = _stakingKeys[i];
+    //         }
+    //     }
 
-        RiscBlock memory rb = RiscBlock(keys, sig, message);
+    //     RiscBlock memory rb = RiscBlock(keys, sig, message);
 
-        bonsaiRelay.requestCallback(
-            blsImageId, abi.encode(rb), address(this), this.storeResult.selector, 100000
-        );
-    }
+    //     bonsaiRelay.requestCallback(
+    //         blsImageId, abi.encode(rb), address(this), this.storeResult.selector, 100000
+    //     );
+    // }
 
 
     function addBlockDemo(
