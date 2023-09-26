@@ -2,8 +2,10 @@
 
 pragma solidity ^0.8.17;
 
-import {IBonsaiRelay} from "./IBonsaiRelay.sol";
-import {BonsaiCallbackReceiver} from "./BonsaiCallbackReceiver.sol";
+import {IBonsaiRelay} from "bonsai/IBonsaiRelay.sol";
+import {BonsaiCallbackReceiver} from "bonsai/BonsaiCallbackReceiver.sol";
+
+//import {BonsaiCallbackReceiver} from "./BonsaiCallbackReceiver.sol";
 
 contract Sequencer is BonsaiCallbackReceiver {
     event NewStakingKey(G2Point stakingKey, uint256 amount, uint256 index);
@@ -52,61 +54,10 @@ contract Sequencer is BonsaiCallbackReceiver {
         if (warp.height != blockHeight) {
             revert IncorrectBlockNumber(warp.height, blockHeight);
         }
-
         commitments[blockHeight] = warp.block_root;
         blockHeight += 1;
-        
-
         emit NewBlock(firstBlockNumber);
     }
-
-    // function addBlock(
-    //     bytes memory message,
-    //     bytes memory sig,
-    //     bool[] memory bitmap,
-    //     uint256 minStakeThreshold
-    // ) external {
-    //     require(bitmap.length <= _stakingKeys.length, "bitmap is too long");
-
-    //     // Build aggregated public key
-    //     uint256 index = 0;
-    //     while (!bitmap[index] && index < bitmap.length) {
-    //         index++;
-    //     }
-
-    //     if (index >= bitmap.length) {
-    //         revert NoKeySelected();
-    //     }
-
-    //     // Compute the stake corresponding to the signers and check if it is enough
-    //     uint256 stake = 0;
-    //     for (uint256 i = index; i < bitmap.length; i++) {
-    //         if (bitmap[i]) {
-    //             stake += _stakeAmounts[i]; 
-    //         }
-    //     }
-
-    //     if (stake < minStakeThreshold) {
-    //         revert NotEnoughStake();
-    //     }
-
-    //     //TODO fix the keys because bytes[] is bytes
-    //     G2Point[] memory keys = new G2Point[](bitmap.length);
-
-
-    //     for (uint256 i = index + 1; i < bitmap.length; i++) {
-    //         if (bitmap[i]) {
-    //             keys[i] = _stakingKeys[i];
-    //         }
-    //     }
-
-    //     RiscBlock memory rb = RiscBlock(keys, sig, message);
-
-    //     bonsaiRelay.requestCallback(
-    //         blsImageId, abi.encode(rb), address(this), this.storeResult.selector, 100000
-    //     );
-    // }
-
 
     function addBlockDemo(
         RiscBlock calldata risc
@@ -129,7 +80,6 @@ contract Sequencer is BonsaiCallbackReceiver {
     }
 
     function getStakingKey(uint256 index) public view returns (G2Point memory, uint256) {
-        //TODO maybe change the key to be a bytes array
         return (_stakingKeys[index], _stakeAmounts[index]);
     }
 
