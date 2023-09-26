@@ -20,7 +20,7 @@ contract Sequencer {
         uint256 parent_root;
     }
 
-    /// @notice Function to add block. Future version will need verification of BLS signatures and verification of parent root.
+    /// @notice Function to add block. Future version will need verification of BLS 
     function addBlock(WarpBlock calldata warp) external {
         uint256 firstBlockNumber = blockHeight;
         if (warp.height != blockHeight) {
