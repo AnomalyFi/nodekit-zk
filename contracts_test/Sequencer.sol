@@ -5,7 +5,7 @@ pragma solidity ^0.8.17;
 contract Sequencer {
 
     mapping(uint256 blockHeight => uint256 commitment) public commitments;
-    uint256 public blockHeight;
+    uint256 public blockHeight = 1;
     uint256 public constant MAX_BLOCKS = 500;
 
     event NewBlock(uint256 blockNumber);
